@@ -1,292 +1,223 @@
-﻿using PROJECT1.ADMIN;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PROJECT1.USER
+namespace PROJECT1.ADMIN
 {
-    public class UserUI
+    public class AdminUI
     {
-        private UserService service = new UserService();
-        private Student student;
+        private AdminService service = new AdminService();
 
-        public void Start()
-        {
-            student = new Student();
-
-            Console.WriteLine("===== USER LOGIN =====");
-
-            Console.Write("Enter Student Name: ");
-            student.Name = Console.ReadLine();
-
-            Console.Write("Enter Registration Number: ");
-            student.RegistrationNumber = Console.ReadLine();
-            if (student.Name == "" || student.RegistrationNumber == "")
-            {
-                Console.WriteLine("Invalid student details!");
-                return;
-            }
-
-            ShowMenu();
-        }
-
-        private void ShowMenu()
+        public void ShowMenu()
         {
             while (true)
             {
                 Console.Clear();
-                Console.WriteLine("\n========== USER MENU ==========");
-                Console.WriteLine("1. View All Books");
-                Console.WriteLine("2. Search Book");
-                Console.WriteLine("3. Request Book Issue");
-                Console.WriteLine("4. Return Book Request");
-                Console.WriteLine("5. Low Stock Books");
-                Console.WriteLine("6. Check Availability");
-                Console.WriteLine("7. My Issued Books");
-                Console.WriteLine("8. Instructions and Rules");
-                Console.WriteLine("9. Reserve Book");
+
+                Console.WriteLine("================================");
+                Console.WriteLine("   LIBRARY MANAGEMENT SYSTEM");
+                Console.WriteLine("           ADMIN MENU");
+                Console.WriteLine("1. Add Book");
+                Console.WriteLine("2. View All Books");
+                Console.WriteLine("3. Search Book");
+                Console.WriteLine("4. Update Book");
+                Console.WriteLine("5. Delete Book");
+                Console.WriteLine("6. Sort Books");
+                Console.WriteLine("7. Issue Book");
+                Console.WriteLine("8. Return Book");
+                Console.WriteLine("9. View History");
                 Console.WriteLine("10. Exit");
-
-
                 Console.Write("Enter your choice: ");
-                string choice = Console.ReadLine();
 
-                if (choice == "1")
-                {
-                    ViewAllBooks();
-                }
-                else if (choice == "2")
-                {
-                    SearchBook();
-                }
-                else if (choice == "3")
-                {
-                    RequestIssueBook();
-                }
-                else if (choice == "4")
-                {
+                string input = Console.ReadLine();
+                int option = Convert.ToInt32(input);
 
-                    RequestReturnBook();
-                }
-                else if (choice == "5")
+                if (option == 1)
                 {
-                    LowStockBooks();
+                    AddBookUI();
                 }
-                else if (choice == "6")
+                else if (option == 2)
                 {
-                    CheckAvailability();
+                    Console.Clear();
+                    service.ViewBooks();
+                    Console.WriteLine("\nPress any key to continue...");
+                    Console.ReadKey();
                 }
-                else if (choice == "7")
+                else if (option == 3)
                 {
-                    ViewIssuedRecords();
+                    SearchBookUI();
                 }
-                else if (choice == "8")
+                else if (option == 4)
                 {
-                    ShowInstructions();
+                    UpdateBookUI();
                 }
-                else if (choice == "9")
+                else if (option == 5)
                 {
-                    ReserveBook();
+                    DeleteBookUI();
                 }
-                else if (choice == "10")
+                else if (option == 6)
                 {
-                    Console.WriteLine("Thank you for using the system!");
-                    break;
+                    service.SortBooks();
+                    Console.WriteLine("\nPress any key to continue...");
+                    Console.ReadKey();
+                }
+                else if (option == 7)
+                {
+                    IssueBookUI();
+                }
+                else if (option == 8)
+                {
+                    ReturnBookUI();
+                }
+                else if (option == 9)
+                {
+                    Console.Clear();
+                    service.ViewHistory();
+                    Console.WriteLine("\nPress any key to continue...");
+                    Console.ReadKey();
+                }
+                else if (option == 10)
+                {
+                    Console.Clear();
+                    return;
                 }
                 else
                 {
-                    Console.WriteLine("Invalid choice! Try again.");
+                    Console.WriteLine("Invalid option.");
+                    Console.ReadKey();
                 }
-                Console.WriteLine("\nPress any key to continue...");
-                Console.ReadKey();
             }
         }
 
-        private void ViewAllBooks()
+        private void AddBookUI()
         {
-            List<Book> books = service.GetAllBooks();
+            Console.Clear();
+            Console.WriteLine("----- Add Book -----");
 
-            if (books.Count == 0)
-            {
-                Console.WriteLine("No books found.");
-                return;
-            }
+            Book book = new Book();
 
-            foreach (Book book in books)
-            {
-                DisplayBook(book);
-            }
+            Console.Write("Enter book name: ");
+            book.Name = Console.ReadLine();
+
+            Console.Write("Enter book ID: ");
+            book.Id = Console.ReadLine();
+
+            Console.Write("Enter author name: ");
+            book.Author = Console.ReadLine();
+
+            Console.Write("Enter quantity: ");
+            book.Quantity = Convert.ToInt32(Console.ReadLine());
+
+            service.AddBook(book);
+
+            Console.ReadKey();
         }
 
-        private void SearchBook()
+        private void SearchBookUI()
         {
-            Console.Write("Enter Book ID: ");
+            Console.Clear();
+            Console.WriteLine("----- Search Book -----");
+
+            Console.Write("Enter book ID: ");
             string id = Console.ReadLine();
 
-            List<Book> books = service.GetAllBooks();
-            Book foundBook = null;
+            Book book = service.SearchBook(id);
 
-            foreach (Book book in books)
+            if (book != null)
             {
-                if (book.Id.Equals(id,
-                    StringComparison.OrdinalIgnoreCase))
-                {
-                    foundBook = book;
-                    break;
-                }
-            }
-
-            if (foundBook != null)
-            {
-                DisplayBook(foundBook);
+                Console.WriteLine("Book Name: " + book.Name);
+                Console.WriteLine("Book ID: " + book.Id);
+                Console.WriteLine("Author: " + book.Author);
+                Console.WriteLine("Quantity: " + book.Quantity);
             }
             else
             {
                 Console.WriteLine("Book not found.");
             }
-        }
-        private void RequestIssueBook()
-        {
-            ViewAllBooks();
 
-            Console.Write("Enter Book ID to issue: ");
-            string id = Console.ReadLine();
-
-            bool result = service.RequestIssueBook(student, id);
-
-            if (result)
-            {
-                Console.WriteLine("Issue request submitted successfully.");
-            }
-            else
-            {
-                Console.WriteLine("Book not found or unavailable.");
-            }
+            Console.ReadKey();
         }
 
-        private void RequestReturnBook()
+        private void UpdateBookUI()
         {
-            Console.Write("Enter Book ID to return: ");
+            Console.Clear();
+            Console.WriteLine("----- Update Book -----");
+
+            Console.Write("Enter book ID: ");
             string id = Console.ReadLine();
 
-            bool result = service.RequestReturnBook(student, id);
+            Book oldBook = service.SearchBook(id);
 
-            if (result)
+            if (oldBook != null)
             {
-                Console.WriteLine("Return request submitted successfully.");
-            }
-            else
-            {
-                Console.WriteLine("Book not found.");
-            }
-        }
+                Book book = new Book();
 
-        private void ReserveBook()
-        {
-            ViewAllBooks();
+                book.Id = id;
 
-            Console.Write("Enter Book ID to reserve: ");
-            string id = Console.ReadLine();
+                Console.Write("Enter new book name: ");
+                book.Name = Console.ReadLine();
 
-            bool result = service.ReserveBook(student, id);
+                Console.Write("Enter new author name: ");
+                book.Author = Console.ReadLine();
 
-            if (result)
-            {
-                Console.WriteLine("Book reserved successfully.");
+                Console.Write("Enter new quantity: ");
+                book.Quantity = Convert.ToInt32(Console.ReadLine());
+
+                service.UpdateBook(book);
             }
             else
             {
                 Console.WriteLine("Book not found.");
             }
+
+            Console.ReadKey();
         }
 
-        private void ViewIssuedRecords()
+        private void DeleteBookUI()
         {
-            List<string> records = service.GetIssuedRecords();
+            Console.Clear();
+            Console.WriteLine("----- Delete Book -----");
 
-            if (records.Count == 0)
-            {
-                Console.WriteLine("No issued records found.");
-                return;
-            }
-
-            foreach (string record in records)
-            {
-                Console.WriteLine(record);
-            }
-        }
-
-       
-
-        private void DisplayBook(Book book)
-        {
-            Console.WriteLine("----------------------------");
-            Console.WriteLine("Book Name: " + book.Name);
-            Console.WriteLine("Book ID: " + book.Id);
-            Console.WriteLine("Author: " + book.Author);
-            Console.WriteLine("Quantity: " + book.Quantity);
-        }
-        private void LowStockBooks()
-        {
-            List<Book> books = service.GetAllBooks();
-            bool found = false;
-
-            Console.WriteLine("===== LOW STOCK BOOKS =====");
-
-            foreach (Book book in books)
-            {
-                if (book.Quantity > 0 && book.Quantity <= 2)
-                {
-                    DisplayBook(book);
-                    found = true;
-                }
-            }
-            if (found == false)
-            {
-                Console.WriteLine("No low-stock books found.");
-            }
-        }
-        private void CheckAvailability()
-        {
-            Console.Write("Enter Book ID: ");
+            Console.Write("Enter book ID: ");
             string id = Console.ReadLine();
 
-            List<Book> books = service.GetAllBooks();
-            bool found = false;
+            service.DeleteBook(id);
 
-            foreach (Book book in books)
-            {
-                if (book.Id == id)
-                {
-                    found = true;
-                    if (book.Quantity > 0)
-                    {
-                        Console.WriteLine("Book is available.");
-                    }
-                    else
-                    {
-                        Console.WriteLine("Book is not available.");
-                    }
-
-                    DisplayBook(book);
-                    break;
-                }
-            }
-
-            if (found == false)
-            {
-                Console.WriteLine("Book not found.");
-            }
+            Console.ReadKey();
         }
-        private void ShowInstructions()
+
+        private void IssueBookUI()
         {
-            Console.WriteLine("===== LIBRARY RULES =====");
-            Console.WriteLine("1. Enter correct Book ID.");
-            Console.WriteLine("2. Check book availability.");
-            Console.WriteLine("3. Return books on time.");
-            Console.WriteLine("4. Follow library rules.");
+            Console.Clear();
+            Console.WriteLine("----- Issue Book -----");
+
+            Console.Write("Enter student name: ");
+            string studentName = Console.ReadLine();
+
+            Console.Write("Enter book ID: ");
+            string bookId = Console.ReadLine();
+
+            service.IssueBook(studentName, bookId);
+
+            Console.ReadKey();
+        }
+
+        private void ReturnBookUI()
+        {
+            Console.Clear();
+            Console.WriteLine("----- Return Book -----");
+
+            Console.Write("Enter student name: ");
+            string studentName = Console.ReadLine();
+
+            Console.Write("Enter book ID: ");
+            string bookId = Console.ReadLine();
+
+            service.ReturnBook(studentName, bookId);
+
+            Console.ReadKey();
         }
     }
 }
