@@ -4,87 +4,95 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PROJECT1.USER
+namespace PROJECT1.ADMIN
 {
-    public class Student
+    public class Book
     {
         public string Name;
-        public string RegistrationNumber;
-        public Student()
+        public string Id;
+        public string Author;
+        public int Quantity;
+        public Book()
         {
             Name = "";
-            RegistrationNumber = "";
+            Id = "";
+            Author = "";
+            Quantity = 0;
         }
-        public Student(string name, string registrationNumber)
+
+        public Book(string name, string id, string author, int quantity)
         {
             Name = name;
-            RegistrationNumber = registrationNumber;
+            Id = id;
+            Author = author;
+            Quantity = quantity;
+        }
+        public bool IsAvailable
+        {
+            get
+            {
+                return Quantity > 0;
+            }
         }
     }
-    public class BookRequest
+    public class IssuedBook
     {
         public string StudentName;
-        public string RegistrationNumber;
         public string BookName;
         public string BookId;
         public string Author;
-        public string RequestType;
         public int Quantity;
-        public BookRequest()
+        public IssuedBook()
         {
             StudentName = "";
-            RegistrationNumber = "";
             BookName = "";
             BookId = "";
             Author = "";
-            RequestType = "";
             Quantity = 0;
         }
-        public BookRequest(
-           string studentName,
-           string registrationNumber,
-           string bookName,
-           string bookId,
-           string author,
-           string requestType,
-           int quantity)
+        public IssuedBook(
+                   string studentName,
+                   string bookName,
+                   string bookId,
+                   string author,
+                   int quantity)
         {
             StudentName = studentName;
-            RegistrationNumber = registrationNumber;
             BookName = bookName;
             BookId = bookId;
             Author = author;
-            RequestType = requestType;
             Quantity = quantity;
         }
     }
-    public class Reservation
+    public class HistoryRecord
     {
-        public string StudentName;
-        public string RegistrationNumber;
+        public string Action;
         public string BookName;
         public string BookId;
         public string Author;
-        public Reservation()
+        public int Quantity;
+        public HistoryRecord()
         {
-            StudentName = "";
-            RegistrationNumber = "";
+            Action = "";
             BookName = "";
             BookId = "";
             Author = "";
+            Quantity = 0;
         }
-        public Reservation(
-            string studentName,
-            string registrationNumber,
-            string bookName,
-            string bookId,
-            string author)
+        public HistoryRecord(
+                   string action,
+                   string bookName,
+                   string bookId,
+                   string author,
+                   int quantity)
         {
-            StudentName = studentName;
-            RegistrationNumber = registrationNumber;
+            Action = action;
             BookName = bookName;
             BookId = bookId;
             Author = author;
+            Quantity = quantity;
         }
     }
 }
+        
+
