@@ -15,6 +15,7 @@ namespace PROJECT1.USER
         private readonly string issueRequestFile = "requestissue.txt";
         private readonly string returnRequestFile = "requestreturn.txt";
         private readonly string reserveFile = "reserve.txt";
+        private readonly string booksfile = "filterbyauthor.txt";
 
         public List<Book> GetBooks()
         {
@@ -25,8 +26,7 @@ namespace PROJECT1.USER
                 return books;
             }
             using (StreamReader reader = new StreamReader(booksFile))
-
-            { 
+            {
 
                 while (!reader.EndOfStream)
                 {
@@ -34,41 +34,40 @@ namespace PROJECT1.USER
                     string id = reader.ReadLine();
                     string author = reader.ReadLine();
                     string quantity = reader.ReadLine();
-
                     if (name == null || id == null ||
                         author == null || quantity == null)
                     {
                         break;
                     }
-
                     Book book = new Book();
-
                     book.Name = name;
                     book.Id = id;
                     book.Author = author;
                     book.Quantity = int.Parse(quantity);
-
                     books.Add(book);
                 }
-        }
+            }
             return books;
-}
+        }
         public List<string> GetIssuedRecords()
         {
-            if (!File.Exists(issuedFile))
+            List<string> records = new List<string>();
+
+            if (File.Exists(issuedFile))
             {
-                return new List<string>();
+                string[] lines = File.ReadAllLines(issuedFile);
+
+                foreach (string line in lines)
+                {
+                    records.Add(line);
+                }
             }
-
-            return new List<string>(
-                File.ReadAllLines(issuedFile));
+            return records;
         }
-
         public void SaveIssuedRecords(List<string> records)
         {
             File.WriteAllLines(issuedFile, records);
         }
-
         public void SaveIssueRequest(
             Student student, Book book)
         {
@@ -81,42 +80,47 @@ namespace PROJECT1.USER
                 writer.WriteLine(book.Id);
                 writer.WriteLine(book.Author);
                 writer.WriteLine(book.Quantity);
-
-              
+            }
+        }
+       
+        public void Savefilterbyauthor(
+            string author, Book book)
+        {
+            using (StreamWriter writer =
+     new StreamWriter(booksfile, true))
+            {
+                writer.WriteLine(book.Name);
+                writer.WriteLine(book.Id);
+                writer.WriteLine(book.Author);
+                writer.WriteLine(book.Quantity);
             }
         }
         public void SaveReturnRequest(
             Student student, Book book)
         {
             using (StreamWriter writer =
-    new StreamWriter(returnRequestFile, true)) {
-
+    new StreamWriter(returnRequestFile, true))
+            {
                 writer.WriteLine(student.Name);
                 writer.WriteLine(student.RegistrationNumber);
                 writer.WriteLine(book.Name);
                 writer.WriteLine(book.Id);
                 writer.WriteLine(book.Author);
                 writer.WriteLine(book.Quantity);
-
-           
             }
         }
         public void SaveReservation(
             Student student, Book book)
         {
-
             using (StreamWriter writer =
     new StreamWriter(reserveFile, true))
             {
-
                 writer.WriteLine(student.Name);
                 writer.WriteLine(student.RegistrationNumber);
                 writer.WriteLine(book.Name);
                 writer.WriteLine(book.Id);
                 writer.WriteLine(book.Author);
             }
-
         }
     }
 }
-
