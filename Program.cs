@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 
 namespace PROJECT1
 {
- 
 internal class Program
     {
         static void Main(string[] args)
@@ -20,10 +19,8 @@ internal class Program
                 Console.WriteLine("1. Admin Menu");
                 Console.WriteLine("2. User Menu");
                 Console.WriteLine("3. Exit");
-
                 Console.Write("Enter choice: ");
                 string choice = Console.ReadLine();
-
                 if (choice == "1")
                 {
                     Console.Clear();
@@ -33,7 +30,6 @@ internal class Program
                 else if (choice == "2")
                 {
                     Console.Clear();
-
                     UserUI user = new UserUI();
                     user.Start();
                 }
